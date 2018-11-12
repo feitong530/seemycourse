@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/recognize"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="Recognition"
+        android:iconTint="#66CCFF"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/make"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_background"
+        android:title="Production"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/history"
+        android:enabled="true"
+        android:icon="@drawable/ic_history_black_24dp"
+        android:title="History"
+        app:showAsAction="ifRoom"
+        />
+
+</menu>
