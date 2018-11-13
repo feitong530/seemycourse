@@ -22,44 +22,43 @@
     <!--app:layout_constraintTop_toTopOf="parent">-->
 
     <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
+        android:id="@+id/btn_select"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/styled_btn"
         android:fontFamily="casual"
-        android:text="Select a Phonto"
-        android:textColor="@color/design_default_color_primary_dark"
+        android:text="SELECT A PHOTO"
+        android:textAllCaps="false"
+        android:textColor="@color/shenlanzi"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.03"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <Button
         android:id="@+id/button4"
-        android:background="@drawable/styled_btn"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/styled_btn"
         android:fontFamily="casual"
         android:text="take a photo"
-        android:textColor="@color/design_default_color_primary_dark"
+        android:textColor="@color/shenlanzi"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.03"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_select" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="309dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,24 +71,27 @@
             android:layout_height="wrap_content"
             android:fontFamily="casual"
             android:text="Recognition Results"
-            android:textColor="@android:color/holo_blue_dark"
+            android:textColor="@color/shenlanzi"
             android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="176dp"
+            android:layout_width="wrap_content"
+            android:layout_height="186dp"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
 
 
         <Button
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/styled_btn"
             android:fontFamily="casual"
             android:text="just save"
+            android:textColor="@color/shenlanzi"
             android:textStyle="bold" />
 
 

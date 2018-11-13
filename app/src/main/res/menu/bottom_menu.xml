@@ -5,7 +5,7 @@
     <item
         android:id="@+id/recognize"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/ic_settings_overscan_black_24dp"
         android:title="Recognition"
         android:iconTint="#66CCFF"
         app:showAsAction="ifRoom"
@@ -13,14 +13,14 @@
     <item
         android:id="@+id/make"
         android:enabled="true"
-        android:icon="@drawable/ic_launcher_background"
+        android:icon="@drawable/ic_format_paint_black_24dp"
         android:title="Production"
         app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/history"
         android:enabled="true"
-        android:icon="@drawable/ic_history_black_24dp"
+        android:icon="@drawable/ic_folder_open_black_24dp"
         android:title="History"
         app:showAsAction="ifRoom"
         />

@@ -3,5 +3,9 @@
     <color name="colorPrimary">#66ccff</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#d81b60</color>
+    <color name="corn_flower_blue">#6495ed</color>
+    <color name="sky_blue">#bfe5f4</color>
+    <color name="shenlankuang">#4c8ba6</color>
+    <color name="shenlanzi">#327694</color>
 
 </resources>
