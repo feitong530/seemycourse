@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,13 +22,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionText.TextBlock;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,8 +38,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class RecognizeFragment extends Fragment {
 
-    public static final int REQUEST_PERMISSION_REQUEST = 0x00;
-    public static final int REQUEST_IMAGE_CAPTURE = 0x01;
+    public static final int REQUEST_PERMISSION_REQUEST = 0b00;
+    public static final int REQUEST_IMAGE_CAPTURE = 0b01;
 
     private Uri imageUri = null;
     private Context ctx = null;
@@ -104,7 +105,38 @@ public class RecognizeFragment extends Fragment {
      */
     @OnClick(R.id.btn_recognize)
     public void recognizeImage() {
+        Util.recognizeText(ctx, imageUri, new Util.Callback<FirebaseVisionText>() {
+            @Override
+            public void onSuccess(FirebaseVisionText result) {
+                List<TextBlock> textBlocks = result.getTextBlocks();
+                for (TextBlock block : textBlocks) {
+                    String blockText = block.getText();
+                    Point[] blockCornerPoints = block.getCornerPoints();
+                    Rect blockFrame = block.getBoundingBox();
+                    Log.e("recognize", "====================================");
+                    Log.e("recognize", blockText);
+                    Log.e("recognize", Arrays.asList(blockCornerPoints).toString());
+                    Log.e("recognize", blockFrame.toString());
+                    Log.e("recognize", "====================================");
+                    for (FirebaseVisionText.Line line: block.getLines()) {
+                        String lineText = line.getText();
+                        Float lineConfidence = line.getConfidence();
+                        Point[] lineCornerPoints = line.getCornerPoints();
+                        Rect lineFrame = line.getBoundingBox();
+                        for (FirebaseVisionText.Element element: line.getElements()) {
+                            String elementText = element.getText();
+                            Float elementConfidence = element.getConfidence();
+                            Point[] elementCornerPoints = element.getCornerPoints();
+                            Rect elementFrame = element.getBoundingBox();
+                        }
+                    }
+                }
+                makeSnackbar(result.getTextBlocks().size() + "");
+            }
 
+            @Override
+            public void onFailure(String message) { makeSnackbar(message); }
+        });
     }
 
     /**
@@ -168,6 +200,10 @@ public class RecognizeFragment extends Fragment {
         }
     }
 
+    /**
+     * Prompt a snackbar
+     * @param message message to tell
+     */
     private void makeSnackbar(String message) {
         Snackbar.make(btn_select_image, message, Snackbar.LENGTH_SHORT).show();
     }
