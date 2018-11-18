@@ -22,10 +22,8 @@ import java.util.Date;
 
 public class Util {
 
-    /**
-     * @description temp directory in device
-     */
-    public static final String IMAGE_DIRECTORY = "seemycourse";
+    /* temp directory in device */
+    private static final String IMAGE_DIRECTORY = "seemycourse";
 
     /**
      * Generate A File in Device

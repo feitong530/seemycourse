@@ -39,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.recognize:
-                        switchFragment(0);
+                        switchFragment(FRAGMENT_RECOGNIZE);
                         break;
                     case R.id.make:
-                        switchFragment(1);
+                        switchFragment(FRAGMENT_PRODUCTION);
                         break;
                     case R.id.history:
-                        switchFragment(2);
+                        switchFragment(FRAGMENT_HISTORY);
                         break;
                     default: return false;
                 }

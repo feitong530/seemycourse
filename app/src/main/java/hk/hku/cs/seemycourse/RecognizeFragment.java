@@ -5,8 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Point;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +30,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText.TextBlock;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,10 +42,16 @@ import static android.app.Activity.RESULT_OK;
 public class RecognizeFragment extends Fragment {
 
     public static final int REQUEST_PERMISSION_REQUEST = 0b00;
-    public static final int REQUEST_IMAGE_CAPTURE = 0b01;
+    public static final int REQUEST_IMAGE_CAPTURE      = 0b01;
 
+    /* Image Uri from Cropping or Photo Taking */
     private Uri imageUri = null;
+    /* Activity Context */
     private Context ctx = null;
+
+    /* Input Image Size */
+    private float currentHeight = 0;
+    private float currentWidth  = 0;
 
     @BindView(R.id.btn_select_image) Button btn_select_image;
     @BindView(R.id.imageView) ImageView iv;
@@ -109,34 +118,73 @@ public class RecognizeFragment extends Fragment {
             @Override
             public void onSuccess(FirebaseVisionText result) {
                 List<TextBlock> textBlocks = result.getTextBlocks();
+                ArrayList<MetaText> blocks = new ArrayList<>();
                 for (TextBlock block : textBlocks) {
-                    String blockText = block.getText();
-                    Point[] blockCornerPoints = block.getCornerPoints();
-                    Rect blockFrame = block.getBoundingBox();
-                    Log.e("recognize", "====================================");
-                    Log.e("recognize", blockText);
-                    Log.e("recognize", Arrays.asList(blockCornerPoints).toString());
-                    Log.e("recognize", blockFrame.toString());
-                    Log.e("recognize", "====================================");
+//                    String blockText = block.getText();
+//                    Point[] blockCornerPoints = block.getCornerPoints();
+//                    Rect blockFrame = block.getBoundingBox();
                     for (FirebaseVisionText.Line line: block.getLines()) {
-                        String lineText = line.getText();
-                        Float lineConfidence = line.getConfidence();
-                        Point[] lineCornerPoints = line.getCornerPoints();
-                        Rect lineFrame = line.getBoundingBox();
+//                        String lineText = line.getText();
+//                        Float lineConfidence = line.getConfidence();
+//                        Point[] lineCornerPoints = line.getCornerPoints();
+//                        Rect lineFrame = line.getBoundingBox();
                         for (FirebaseVisionText.Element element: line.getElements()) {
                             String elementText = element.getText();
-                            Float elementConfidence = element.getConfidence();
-                            Point[] elementCornerPoints = element.getCornerPoints();
                             Rect elementFrame = element.getBoundingBox();
+//                            Float elementConfidence = element.getConfidence();
+//                            Point[] elementCornerPoints = element.getCornerPoints();
+
+                            blocks.add(new MetaText(elementText, new RectF(elementFrame)));
                         }
                     }
                 }
-                makeSnackbar(result.getTextBlocks().size() + "");
+                drawCanvas(blocks);
             }
 
             @Override
             public void onFailure(String message) { makeSnackbar(message); }
         });
+    }
+
+    /**
+     * Draw Text to Bitmap
+     * @param textBlocks text blocks that recognize from image
+     */
+    private void drawCanvas(ArrayList<MetaText> textBlocks) {
+        // Background Template
+        Bitmap template = BitmapFactory
+                .decodeResource(getResources(), R.mipmap.night);
+
+        // Create a Empty Bitmap
+        Bitmap cover = Bitmap.createBitmap(
+                template.getWidth(),
+                template.getHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        // Create Canvas base on the Empty Bitmap
+        Canvas canvas = new Canvas(cover);
+        // Draw the template as the background
+        canvas.drawBitmap(template, 0, 0, null);
+
+        // Draw Masking
+        canvas.drawARGB(80, 102, 204, 255);
+
+        // Create a Paint Config of the Text
+        Paint textPaintMesh = new Paint();
+        textPaintMesh.setTextSize(32);
+        textPaintMesh.setColor(Color.WHITE);
+        textPaintMesh.setAntiAlias(true);
+        textPaintMesh.setFakeBoldText(true);
+
+        for (MetaText block : textBlocks) {
+            RectF rect = block.getFrame();
+            float left = rect.left / currentWidth * template.getWidth();
+            float bottom = rect.bottom / currentHeight * template.getHeight();
+            canvas.drawText(block.getText(), left, bottom, textPaintMesh);
+        }
+
+        iv.setImageBitmap(cover);
     }
 
     /**
@@ -175,6 +223,8 @@ public class RecognizeFragment extends Fragment {
 
                     try {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), imageUri);
+                        currentWidth = bitmap.getWidth();
+                        currentHeight = bitmap.getHeight();
                         iv.setImageBitmap(Util.getResizedBitmap(bitmap, 1000));
                     } catch (IOException e) {
                         e.printStackTrace();
