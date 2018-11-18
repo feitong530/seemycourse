@@ -9,7 +9,6 @@
     android:backgroundTint="@color/sky_blue"
     tools:context=".MainActivity">
 
-
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
@@ -17,12 +16,16 @@
         android:layout_weight="9"
         app:layout_constraintBottom_toTopOf="@+id/navigation" />
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+    <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_menu" />
-
+        app:cardElevation="8dp">
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/bottom_menu" />
+    </android.support.design.card.MaterialCardView>
 </LinearLayout>

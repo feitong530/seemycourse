@@ -1,35 +1,174 @@
 package hk.hku.cs.seemycourse;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
+
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_OK;
 
 public class RecognizeFragment extends Fragment {
 
-    private Button btn_save;
+    public static final int REQUEST_PERMISSION_REQUEST = 0x00;
+    public static final int REQUEST_IMAGE_CAPTURE = 0x01;
+
+    private Uri imageUri = null;
+    private Context ctx = null;
+
+    @BindView(R.id.btn_select_image) Button btn_select_image;
+    @BindView(R.id.imageView) ImageView iv;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_recognition, container, false);
-        initLayout(view);
+        ButterKnife.bind(this, view);
+        init();
         return view;
     }
 
-    private void initLayout(View v) {
-        btn_save = v.findViewById(R.id.btn_save);
-        btn_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Snackbar.make(btn_save, "?????", Snackbar.LENGTH_SHORT).show();
+    /**
+     * Initialize
+     */
+    private void init() {
+        ctx = getContext();
+
+        // request Permission to get images
+        requestPermissions(
+                new String[] {
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                },
+                REQUEST_PERMISSION_REQUEST
+        );
+    }
+
+    /**
+     * Start An Activity to Take Photo
+     */
+    @OnClick(R.id.btn_take_photo)
+    public void takePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(ctx.getPackageManager()) != null) {
+            imageUri = FileProvider.getUriForFile(
+                    ctx,
+                    ctx
+                            .getApplicationContext()
+                            .getPackageName() + ".hk.hku.cs.seemycourse.provider",
+                    Util.GenerateFilePath("temp.jpg")
+            );
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    /**
+     * Select an image from device and crop it
+     */
+    @OnClick(R.id.btn_select_image)
+    public void selectImage() {
+        CropImage.activity().start(ctx, this);
+    }
+
+    /**
+     * Using Google ML Kit API to Recognize Text Information
+     */
+    @OnClick(R.id.btn_recognize)
+    public void recognizeImage() {
+
+    }
+
+    /**
+     * Crop Image By Image Uri
+     * @param imageUri uri of the image
+     */
+    private void cropImage(@NonNull Uri imageUri) {
+        CropImage.activity(imageUri).start(ctx, this);
+    }
+
+    /**
+     * Action after invoking activity
+     * @param requestCode Request Code Of Activity
+     * @param resultCode Result Status
+     * @param data Information Need
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            // Take Photo Result
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode != RESULT_OK) {
+                    makeSnackbar("No Photo Captured");
+                    return;
+                }
+
+                cropImage(imageUri);
+                break;
+            // Crop Image Result
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (result == null) return;
+                if (resultCode == RESULT_OK) {
+                    imageUri = result.getUri();
+
+                    try {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(ctx.getContentResolver(), imageUri);
+                        iv.setImageBitmap(Util.getResizedBitmap(bitmap, 1000));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        iv.setImageURI(imageUri);
+                    }
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                    makeSnackbar(error.getMessage());
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION_REQUEST) {
+            if (grantResults.length <= 0
+                    || grantResults[0] != PackageManager.PERMISSION_GRANTED
+                    || grantResults[1] != PackageManager.PERMISSION_GRANTED
+                    ) {
+                makeSnackbar("Permission is denied.");
             }
-        });
+        }
+    }
+
+    private void makeSnackbar(String message) {
+        Snackbar.make(btn_select_image, message, Snackbar.LENGTH_SHORT).show();
     }
 }
