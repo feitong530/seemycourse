@@ -114,6 +114,7 @@ public class RecognizeFragment extends Fragment {
      */
     @OnClick(R.id.btn_recognize)
     public void recognizeImage() {
+        if (imageUri == null) return;
         Util.recognizeText(ctx, imageUri, new Util.Callback<FirebaseVisionText>() {
             @Override
             public void onSuccess(FirebaseVisionText result) {
