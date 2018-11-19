@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        switchFragment(FRAGMENT_RECOGNIZE);
+        switchFragment(FRAGMENT_HISTORY);
     }
 
     /**
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 fragments[index] = new ProductionFragment();
                 break;
             case FRAGMENT_HISTORY:
-                fragments[index] = new HistoryFragment();
+                fragments[index] = new GameFragment();
                 break;
             default: break;
         }
