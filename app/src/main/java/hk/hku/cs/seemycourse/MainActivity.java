@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 fragments[index] = new ProductionFragment();
                 break;
             case FRAGMENT_HISTORY:
-                fragments[index] = new GameFragment();
+                fragments[index] = new TodoListFragment();
                 break;
             default: break;
         }
