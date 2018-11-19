@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        switchFragment(FRAGMENT_HISTORY);
+        switchFragment(FRAGMENT_RECOGNIZE);
     }
 
     /**

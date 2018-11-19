@@ -38,7 +38,9 @@ public abstract class TetrisBlock {
                 return new TetrisBlock.Line(ctx, base);
             case 0b001: // L
                 return new TetrisBlock.L(ctx, base);
-            case 0b010: // Cube
+            case 0b010: // Revert L
+                return new TetrisBlock.RevertL(ctx, base);
+            case 0b011: // Cube
                 return new TetrisBlock.Cube(ctx, base);
         }
         return new TetrisBlock.Line(ctx, base);

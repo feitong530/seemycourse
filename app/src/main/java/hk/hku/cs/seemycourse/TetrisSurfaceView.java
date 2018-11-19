@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,13 +13,15 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
+
 import hk.hku.cs.seemycourse.Tetris.Tetris;
 import hk.hku.cs.seemycourse.Tetris.TetrisBlock;
 import hk.hku.cs.seemycourse.Tetris.TetrisDirection;
 import hk.hku.cs.seemycourse.Tetris.TetrisPoint;
 
 public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceHolder.Callback {
-    private static int TOP_PANEL_HEIGHT = 200;
+    private static int TOP_PANEL_HEIGHT = 0;
 
     /* Holds the surface frame */
     private SurfaceHolder holder;
@@ -39,6 +40,7 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
 
     private static final String TAG = "surface";
 
+    /* Gesture Detector */
     private GestureDetectorCompat gestureDetector;
 
     /* Paint Mesh */
@@ -81,7 +83,7 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
 
         /* Initialize Game */
         gameCtx = new Tetris();
-        gameCtx.init(10, 20);
+        gameCtx.init(12, 32);
 
         FillPaint = new Paint();
         FillPaint.setColor(Color.CYAN);
@@ -148,15 +150,24 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
         }*/
 
         // Lose
-        /*if () {
+        if (currentBlock == null && gameCtx.existFilled(0)) {
             reload();
-        }*/
+        }
 
+        // Remove Filled Line
+        ArrayList<Integer> fullLines = gameCtx.checkLineIsFullyFilled();
+        for (int i = 0; i < fullLines.size(); ++i) {
+            int y = fullLines.get(i);
+            gameCtx.setLine(y, false);
+            gameCtx.pullDownAllPixels(y);
+            gameCtx.setLine(0, false);
+        }
+        
         if (currentBlock == null) {
             currentBlock = TetrisBlock.createBlock(
-                    Math.round((float)Math.random() * 3),
+                    Math.round((float)Math.random() * 4),
                     gameCtx,
-                    new TetrisPoint(3, 0)
+                    new TetrisPoint(4, 0)
             );
             return;
         }
