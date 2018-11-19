@@ -122,18 +122,18 @@ public class RecognizeFragment extends Fragment {
                 ArrayList<MetaText> blocks = new ArrayList<>();
                 for (TextBlock block : textBlocks) {
 //                    String blockText = block.getText();
-//                    TetrisPoint[] blockCornerPoints = block.getCornerPoints();
+//                    Point[] blockCornerPoints = block.getCornerPoints();
 //                    Rect blockFrame = block.getBoundingBox();
                     for (FirebaseVisionText.Line line: block.getLines()) {
 //                        String lineText = line.getText();
 //                        Float lineConfidence = line.getConfidence();
-//                        TetrisPoint[] lineCornerPoints = line.getCornerPoints();
+//                        Point[] lineCornerPoints = line.getCornerPoints();
 //                        Rect lineFrame = line.getBoundingBox();
                         for (FirebaseVisionText.Element element: line.getElements()) {
                             String elementText = element.getText();
                             Rect elementFrame = element.getBoundingBox();
 //                            Float elementConfidence = element.getConfidence();
-//                            TetrisPoint[] elementCornerPoints = element.getCornerPoints();
+//                            Point[] elementCornerPoints = element.getCornerPoints();
 
                             blocks.add(new MetaText(elementText, new RectF(elementFrame)));
                         }
