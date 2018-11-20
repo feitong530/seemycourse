@@ -53,7 +53,14 @@ public class RecognizeFragment extends Fragment {
     private float currentHeight = 0;
     private float currentWidth  = 0;
 
+    /* Selected Template Id */
+    private int templateId = R.mipmap.template_01;
+
+    /* Recognition Result */
+    ArrayList<MetaText> textInfoBlocks = null;
+
     @BindView(R.id.btn_select_image) Button btn_select_image;
+    @BindView(R.id.btn_switch_template) Button btn_switch_template;
     @BindView(R.id.imageView) ImageView iv;
 
     @Nullable
@@ -110,6 +117,17 @@ public class RecognizeFragment extends Fragment {
     }
 
     /**
+     * Switch to a different template and draw again
+     */
+    @OnClick(R.id.btn_switch_template)
+    public void switchTemplate() {
+        startActivityForResult(
+                new Intent(getContext(), TemplateSelectActivity.class),
+                TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION
+        );
+    }
+
+    /**
      * Using Google ML Kit API to Recognize Text Information
      */
     @OnClick(R.id.btn_recognize)
@@ -139,7 +157,9 @@ public class RecognizeFragment extends Fragment {
                         }
                     }
                 }
-                drawCanvas(blocks);
+                textInfoBlocks = blocks;
+                btn_switch_template.setVisibility(View.VISIBLE);
+                switchTemplate();
             }
 
             @Override
@@ -154,7 +174,7 @@ public class RecognizeFragment extends Fragment {
     private void drawCanvas(ArrayList<MetaText> textBlocks) {
         // Background Template
         Bitmap template = BitmapFactory
-                .decodeResource(getResources(), R.mipmap.night);
+                .decodeResource(getResources(), templateId);
 
         // Create a Empty Bitmap
         Bitmap cover = Bitmap.createBitmap(
@@ -234,6 +254,12 @@ public class RecognizeFragment extends Fragment {
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Exception error = result.getError();
                     makeSnackbar(error.getMessage());
+                }
+                break;
+            case TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION:
+                templateId = data.getIntExtra("template", R.mipmap.template_01);
+                if (textInfoBlocks != null) {
+                    drawCanvas(textInfoBlocks);
                 }
                 break;
         }

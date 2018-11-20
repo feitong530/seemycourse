@@ -7,18 +7,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import hk.hku.cs.seemycourse.Template.TemplateItem;
+import hk.hku.cs.seemycourse.Template.TemplateAdapter;
 
 public class ProductionFragment extends Fragment {
 
@@ -34,8 +31,6 @@ public class ProductionFragment extends Fragment {
     }
 
     private void init() {
-//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,
-//                StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TemplateAdapter adapter = new TemplateAdapter(getContext());
         adapter.addItems(
@@ -47,73 +42,6 @@ public class ProductionFragment extends Fragment {
                 new TemplateItem(R.mipmap.template_06, "template 06")
         );
         recyclerView.setAdapter(adapter);
-    }
-
-    public class TemplateItem {
-        private int imageId;
-        private String intro;
-
-        public TemplateItem(int imageId, String intro) {
-            this.imageId = imageId;
-            this.intro = intro;
-        }
-
-        public int getImageId() {
-            return imageId;
-        }
-
-        public String getIntro() {
-            return intro;
-        }
-    }
-
-    public class TemplateAdapter extends RecyclerView.Adapter<TemplateAdapter.TemplateItemView> {
-        private ArrayList<TemplateItem> list;
-        private Context ctx;
-
-        public TemplateAdapter(Context ctx) {
-            this.ctx = ctx;
-            list = new ArrayList<>();
-        }
-
-        public void addItems(TemplateItem... items) {
-            list.addAll(Arrays.asList(items));
-        }
-
-        @NonNull
-        @Override
-        public TemplateItemView onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            return new TemplateItemView(
-                    LayoutInflater.from(ctx)
-                            .inflate(R.layout.item_template, viewGroup, false)
-            );
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull TemplateItemView templateItemView, int i) {
-            templateItemView.iv.setImageResource(list.get(i).getImageId());
-            templateItemView.tv.setText(list.get(i).getIntro());
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-
-
-        /**
-         * View Holder of Template RecycleView
-         */
-        class TemplateItemView extends RecyclerView.ViewHolder {
-            @BindView(R.id.tv) TextView tv;
-            @BindView(R.id.iv) ImageView iv;
-
-            public TemplateItemView(View v) {
-                super(v);
-                ButterKnife.bind(this, v);
-            }
-        }
-
     }
 
 }
