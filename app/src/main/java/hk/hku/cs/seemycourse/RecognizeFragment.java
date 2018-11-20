@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -55,6 +58,9 @@ public class RecognizeFragment extends Fragment {
 
     /* Selected Template Id */
     private int templateId = R.mipmap.template_01;
+
+    /* Current Drew Cover */
+    private Bitmap cover = null;
 
     /* Recognition Result */
     ArrayList<MetaText> textInfoBlocks = null;
@@ -171,13 +177,13 @@ public class RecognizeFragment extends Fragment {
      * Draw Text to Bitmap
      * @param textBlocks text blocks that recognize from image
      */
-    private void drawCanvas(ArrayList<MetaText> textBlocks) {
+    private void drawCanvas(ArrayList<MetaText> textBlocks, boolean playPuzzle, int spanCount) {
         // Background Template
         Bitmap template = BitmapFactory
                 .decodeResource(getResources(), templateId);
 
         // Create a Empty Bitmap
-        Bitmap cover = Bitmap.createBitmap(
+        cover = Bitmap.createBitmap(
                 template.getWidth(),
                 template.getHeight(),
                 Bitmap.Config.ARGB_8888
@@ -205,7 +211,25 @@ public class RecognizeFragment extends Fragment {
             canvas.drawText(block.getText(), left, bottom, textPaintMesh);
         }
 
-        iv.setImageBitmap(cover);
+        if (playPuzzle) {
+            // Load puzzle bitmaps
+            Util.puzzleList = Util.splitBitmap(cover, spanCount, spanCount);
+            for (int i = 0; i <Util.puzzleList.size(); ++i) {
+                Log.e("puzzle", "[" + i + "]: " + Util.puzzleList.get(i).getIndex());
+            }
+            // re-order them
+            Collections.shuffle(Util.puzzleList);
+            for (int i = 0; i <Util.puzzleList.size(); ++i) {
+                Log.e("puzzle", "[" + i + "]: " + Util.puzzleList.get(i).getIndex());
+            }
+
+            Intent intent = new Intent(getContext(), PuzzleActivity.class);
+            intent.putExtra("spanCount", spanCount);
+            startActivityForResult(intent, PuzzleActivity.REQUEST_PUZZLE_GAME);
+        } else {
+            iv.setImageBitmap(cover);
+        }
+
     }
 
     /**
@@ -256,10 +280,23 @@ public class RecognizeFragment extends Fragment {
                     makeSnackbar(error.getMessage());
                 }
                 break;
+            // Select Template
             case TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION:
                 templateId = data.getIntExtra("template", R.mipmap.template_01);
+                boolean isLocked = data.getBooleanExtra("locked", false);
+                int spanCount = data.getIntExtra("span", 3);
                 if (textInfoBlocks != null) {
-                    drawCanvas(textInfoBlocks);
+                    drawCanvas(textInfoBlocks, isLocked, spanCount);
+                } else {
+                    makeSnackbar("Error Recognition!");
+                }
+                break;
+            // Play Puzzle Game
+            case PuzzleActivity.REQUEST_PUZZLE_GAME:
+                if (resultCode == RESULT_OK) {
+                    iv.setImageBitmap(cover);
+                } else {
+                    makeSnackbar("You can try again !");
                 }
                 break;
         }

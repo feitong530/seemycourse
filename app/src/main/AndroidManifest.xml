@@ -32,6 +32,8 @@
             android:theme="@style/Base.Theme.AppCompat"/>
         <activity android:name=".TemplateSelectActivity"
             android:theme="@style/AppTheme" />
+        <activity android:name=".PuzzleActivity"
+            android:theme="@style/AppTheme" />
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="ocr" />

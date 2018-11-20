@@ -17,12 +17,23 @@ import butterknife.ButterKnife;
 
 public class Template {
     public static class TemplateItem {
+        private int spanCount;
+        private boolean locked;
         private int imageId;
         private String intro;
 
         public TemplateItem(int imageId, String intro) {
             this.imageId = imageId;
             this.intro = intro;
+            this.locked = false;
+            this.spanCount = 0;
+        }
+
+        public TemplateItem(int imageId, String intro, int spanCount) {
+            this.imageId = imageId;
+            this.intro = intro;
+            this.locked = true;
+            this.spanCount = spanCount;
         }
 
         public int getImageId() {
@@ -31,6 +42,14 @@ public class Template {
 
         public String getIntro() {
             return intro;
+        }
+
+        public boolean isLocked() {
+            return locked;
+        }
+
+        public int getSpanCount() {
+            return spanCount;
         }
     }
 
@@ -65,7 +84,9 @@ public class Template {
         @Override
         public void onBindViewHolder(@NonNull final TemplateItemView templateItemView, int i) {
             // Set Tag in order to get index when click
-            templateItemView.itemView.setTag(list.get(i).getImageId());
+            templateItemView.itemView.setTag(R.id.tag_resource_id, list.get(i).getImageId());
+            templateItemView.itemView.setTag(R.id.tag_locked_status, list.get(i).isLocked());
+            templateItemView.itemView.setTag(R.id.tag_span_count, list.get(i).getSpanCount());
 
             // Bind View
             templateItemView.iv.setImageResource(list.get(i).getImageId());
@@ -73,8 +94,8 @@ public class Template {
             templateItemView.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int pos = templateItemView.getLayoutPosition();
                     if (listener != null) {
+                        int pos = templateItemView.getLayoutPosition();
                         listener.OnItemClick(templateItemView.itemView, pos);
                     }
                 }
