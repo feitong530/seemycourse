@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment[] fragments;
     private static final int FRAGMENT_RECOGNIZE  = 0;
     private static final int FRAGMENT_PRODUCTION = 1;
-    private static final int FRAGMENT_HISTORY    = 2;
+    private static final int FRAGMENT_SCHEDULE   = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.make:
                         switchFragment(FRAGMENT_PRODUCTION);
                         break;
-                    case R.id.history:
-                        switchFragment(FRAGMENT_HISTORY);
+                    case R.id.schedule:
+                        switchFragment(FRAGMENT_SCHEDULE);
                         break;
                     default: return false;
                 }
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        switchFragment(FRAGMENT_RECOGNIZE);
+        switchFragment(FRAGMENT_SCHEDULE);
     }
 
     /**
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             case FRAGMENT_PRODUCTION:
                 fragments[index] = new ProductionFragment();
                 break;
-            case FRAGMENT_HISTORY:
+            case FRAGMENT_SCHEDULE:
                 fragments[index] = new TodoListFragment();
                 break;
             default: break;

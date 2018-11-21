@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import butterknife.BindView;
@@ -22,7 +21,6 @@ import butterknife.ButterKnife;
 
 public class TodoListFragment extends Fragment {
 
-    @BindView(R.id.tv) TextView tv;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
 
     @Nullable
@@ -30,39 +28,30 @@ public class TodoListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_todolist, container, false);
         ButterKnife.bind(this, view);
-        init();
+        init(getContext());
         return view;
     }
 
     /**
      * Initialize
      */
-    private void init() {
-        tv.setText("Write functions of the History Records part here!");
-
+    private void init(Context ctx) {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TodoListAdapter adapter = new TodoListAdapter(getContext());
-        adapter.addItems(
-                new TodoListTtem("message 01"),
-                new TodoListTtem("message 02"),
-                new TodoListTtem("message 03"),
-                new TodoListTtem("message 04"),
-                new TodoListTtem("message 05"),
-                new TodoListTtem("message 06"),
-                new TodoListTtem("message 07"),
-                new TodoListTtem("message 08"),
-                new TodoListTtem("message 09"),
-                new TodoListTtem("message 10")
-        );
+
+        // Load Data
+        ArrayList<String> list = Util.loadSchedule(ctx);
+        adapter.setItems(list);
+
         recyclerView.setAdapter(adapter);
-        setupTouchEvent(adapter);
+        setupTouchEvent(adapter, ctx);
     }
 
     /**
      * Setup Touch Helper to handle Sort & Delete using Gesture
      * @param adapter Recycle View Adapter
      */
-    private void setupTouchEvent(final TodoListAdapter adapter) {
+    private void setupTouchEvent(final TodoListAdapter adapter, final Context ctx) {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -76,26 +65,29 @@ public class TodoListFragment extends Fragment {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                //滑动事件
+                // dragging event
                 Collections.swap(adapter.getDataList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                return false;
+                Util.saveSchedule(ctx, adapter.getStringList());
+                return true;
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                //侧滑事件
+                // swiping event
                 adapter.getDataList().remove(viewHolder.getAdapterPosition());
                 adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
+                Util.saveSchedule(ctx, adapter.getStringList());
             }
         });
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    public class TodoListTtem {
+    public class TodoListItem {
         private String text;
 
-        public TodoListTtem(String text) {
+        public TodoListItem(String text) {
             this.text = text;
         }
 
@@ -105,7 +97,7 @@ public class TodoListFragment extends Fragment {
     }
 
     public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoListItemView> {
-        private ArrayList<TodoListTtem> list;
+        private ArrayList<TodoListItem> list;
         private Context ctx;
 
         public TodoListAdapter(Context ctx) {
@@ -113,11 +105,22 @@ public class TodoListFragment extends Fragment {
             list = new ArrayList<>();
         }
 
-        public void addItems(TodoListTtem... items) {
-            list.addAll(Arrays.asList(items));
+        public void setItems(ArrayList<String> items) {
+            list = new ArrayList<>(items.size());
+            for (String item : items) {
+                list.add(new TodoListItem(item));
+            }
         }
 
-        public ArrayList<TodoListTtem> getDataList() {
+        public ArrayList<String> getStringList() {
+            ArrayList<String> stringList = new ArrayList<>(list.size());
+            for (int i = 0; i < list.size(); ++i) {
+                stringList.add(list.get(i).getText());
+            }
+            return stringList;
+        }
+
+        public ArrayList<TodoListItem> getDataList() {
             return list;
         }
 
@@ -126,14 +129,13 @@ public class TodoListFragment extends Fragment {
         public TodoListItemView onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             return new TodoListItemView(
                     LayoutInflater.from(ctx).inflate(
-                            R.layout.item_history, viewGroup, false)
+                            R.layout.item_todo, viewGroup, false)
             );
         }
 
         @Override
         public void onBindViewHolder(@NonNull TodoListItemView todoListItemView, int i) {
             todoListItemView.tv.setText(list.get(i).getText());
-
         }
 
         @Override

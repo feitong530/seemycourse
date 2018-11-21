@@ -33,18 +33,14 @@ public class TemplateSelectActivity extends AppCompatActivity {
         adapter.addItems(
             new Template.TemplateItem(R.mipmap.template_01, "template 01"),
             new Template.TemplateItem(R.mipmap.template_02, "template 02"),
-            new Template.TemplateItem(R.mipmap.template_03, "template 03", 3),
-            new Template.TemplateItem(R.mipmap.template_04, "template 04", 3),
+            new Template.TemplateItem(R.mipmap.template_09, "template 09"),
+            new Template.TemplateItem(R.mipmap.template_10, "template 10"),
             new Template.TemplateItem(R.mipmap.template_05, "template 05"),
             new Template.TemplateItem(R.mipmap.template_06, "template 06"),
-            new Template.TemplateItem(R.mipmap.template_07, "template 07", 3),
-            new Template.TemplateItem(R.mipmap.template_08, "template 08", 3),
-            new Template.TemplateItem(R.mipmap.template_09, "template 09", 3),
-            new Template.TemplateItem(R.mipmap.template_10, "template 10", 3),
             new Template.TemplateItem(R.mipmap.template_11, "template 11", 3),
             new Template.TemplateItem(R.mipmap.template_12, "template 12", 3),
             new Template.TemplateItem(R.mipmap.template_13, "template 13", 3),
-            new Template.TemplateItem(R.mipmap.template_14, "template 14", 3)
+            new Template.TemplateItem(R.mipmap.template_14, "template 14", 6)
         );
         adapter.setOnItemClickListener(new Template.OnItemClickListener() {
             @Override

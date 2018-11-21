@@ -34,12 +34,16 @@ public class ProductionFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TemplateAdapter adapter = new TemplateAdapter(getContext());
         adapter.addItems(
-                new TemplateItem(R.mipmap.template_01, "template 01"),
-                new TemplateItem(R.mipmap.template_02, "template 02"),
-                new TemplateItem(R.mipmap.template_03, "template 03"),
-                new TemplateItem(R.mipmap.template_04, "template 04"),
-                new TemplateItem(R.mipmap.template_05, "template 05"),
-                new TemplateItem(R.mipmap.template_06, "template 06")
+                new Template.TemplateItem(R.mipmap.template_01, "template 01"),
+                new Template.TemplateItem(R.mipmap.template_02, "template 02"),
+                new Template.TemplateItem(R.mipmap.template_09, "template 09"),
+                new Template.TemplateItem(R.mipmap.template_10, "template 10"),
+                new Template.TemplateItem(R.mipmap.template_05, "template 05"),
+                new Template.TemplateItem(R.mipmap.template_06, "template 06"),
+                new Template.TemplateItem(R.mipmap.template_11, "template 11"),
+                new Template.TemplateItem(R.mipmap.template_12, "template 12"),
+                new Template.TemplateItem(R.mipmap.template_13, "template 13"),
+                new Template.TemplateItem(R.mipmap.template_14, "template 14")
         );
         recyclerView.setAdapter(adapter);
     }

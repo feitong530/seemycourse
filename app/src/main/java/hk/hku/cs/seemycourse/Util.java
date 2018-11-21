@@ -2,11 +2,14 @@ package hk.hku.cs.seemycourse;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.JsonReader;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -18,6 +21,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -25,6 +29,9 @@ public class Util {
 
     /* temp directory in device */
     private static final String IMAGE_DIRECTORY = "seemycourse";
+
+    private static final String PACKAGE_NAME = "seemycourse";
+    private static final String SCHEDULE_STORAGE_KEY = "schedule";
 
     /* Bitmaps to be combine */
     public static ArrayList<BitmapPiece> puzzleList = null;
@@ -89,6 +96,53 @@ public class Util {
             }
         }
         return list;
+    }
+
+    /**
+     * Load Schedule from storage
+     * @param ctx Context of activity
+     * @return schedule strings
+     */
+    public static ArrayList<String> loadSchedule(Context ctx) {
+        ArrayList<String> schedule = new ArrayList<>();
+        SharedPreferences pref = ctx.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE);
+        String scheduleJSONString = pref.getString(SCHEDULE_STORAGE_KEY, "[]");
+        if (scheduleJSONString.equals("[]")) {
+            scheduleJSONString = "[\"Manage Your Course !\"]";
+        }
+        JsonReader reader = new JsonReader(new StringReader(scheduleJSONString));
+        try {
+            reader.beginArray();
+            while (reader.hasNext()) {
+                schedule.add(reader.nextString());
+            }
+            reader.endArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return schedule;
+    }
+
+    /**
+     * Save schedule to storage
+     * @param ctx Context of activity
+     * @param schedule schedule strings
+     */
+    public static void saveSchedule(Context ctx, ArrayList<String> schedule) {
+        SharedPreferences.Editor editor = ctx.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE).edit();
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        for (int i = 0; i < schedule.size(); ++i) {
+            builder.append(String.format("\"%s\"", schedule.get(i)));
+            if (i < schedule.size() - 1) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        editor.putString(SCHEDULE_STORAGE_KEY, builder.toString());
+        Log.e("HELLO", builder.toString());
+        editor.apply();
     }
 
     /**
