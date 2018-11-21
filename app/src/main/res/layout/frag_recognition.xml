@@ -74,6 +74,12 @@
                 tools:srcCompat="@tools:sample/backgrounds/scenic"
                 android:contentDescription="@string/image_description" />
 
+            <SeekBar
+                android:id="@+id/slider_text_size"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <Button
                 android:id="@+id/btn_switch_template"
                 android:visibility="gone"

@@ -3,11 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/schedule"
+        android:enabled="true"
+        android:icon="@drawable/ic_folder_open_black_24dp"
+        android:title="Schedule"
+        android:iconTint="#66CCFF"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
         android:id="@+id/recognize"
         android:enabled="true"
         android:icon="@drawable/ic_settings_overscan_black_24dp"
         android:title="Recognition"
-        android:iconTint="#66CCFF"
         app:showAsAction="ifRoom"
         />
     <item
@@ -15,13 +23,6 @@
         android:enabled="true"
         android:icon="@drawable/ic_format_paint_black_24dp"
         android:title="Production"
-        app:showAsAction="ifRoom"
-        />
-    <item
-        android:id="@+id/history"
-        android:enabled="true"
-        android:icon="@drawable/ic_folder_open_black_24dp"
-        android:title="History"
         app:showAsAction="ifRoom"
         />
 

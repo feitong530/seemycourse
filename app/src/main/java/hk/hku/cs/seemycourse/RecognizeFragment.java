@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionText.TextBlock;
@@ -63,6 +65,7 @@ public class RecognizeFragment extends Fragment {
     /* Recognition Result */
     ArrayList<MetaText> textInfoBlocks = null;
 
+    @BindView(R.id.slider_text_size) SeekBar slider_text_size;
     @BindView(R.id.btn_select_image) Button btn_select_image;
     @BindView(R.id.btn_switch_template) Button btn_switch_template;
     @BindView(R.id.imageView) ImageView iv;
@@ -90,6 +93,22 @@ public class RecognizeFragment extends Fragment {
                 },
                 REQUEST_PERMISSION_REQUEST
         );
+
+        slider_text_size.setMax(50);
+        slider_text_size.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (cover != null && textInfoBlocks != null) {
+                    drawCanvas(progress + 16, false, 0);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
     }
 
     /**
@@ -142,28 +161,20 @@ public class RecognizeFragment extends Fragment {
             public void onSuccess(FirebaseVisionText result) {
                 List<TextBlock> textBlocks = result.getTextBlocks();
                 ArrayList<MetaText> blocks = new ArrayList<>();
+                ArrayList<String> todoItems = new ArrayList<>(textBlocks.size());
                 for (TextBlock block : textBlocks) {
-//                    String blockText = block.getText();
-//                    Point[] blockCornerPoints = block.getCornerPoints();
-//                    Rect blockFrame = block.getBoundingBox();
+                    todoItems.add(block.getText());
                     for (FirebaseVisionText.Line line: block.getLines()) {
-//                        String lineText = line.getText();
-//                        Float lineConfidence = line.getConfidence();
-//                        Point[] lineCornerPoints = line.getCornerPoints();
-//                        Rect lineFrame = line.getBoundingBox();
                         for (FirebaseVisionText.Element element: line.getElements()) {
                             String elementText = element.getText();
                             Rect elementFrame = element.getBoundingBox();
-//                            Float elementConfidence = element.getConfidence();
-//                            Point[] elementCornerPoints = element.getCornerPoints();
 
                             blocks.add(new MetaText(elementText, new RectF(elementFrame)));
                         }
                     }
                 }
                 textInfoBlocks = blocks;
-                btn_switch_template.setVisibility(View.VISIBLE);
-                switchTemplate();
+                prepareDraw(todoItems);
             }
 
             @Override
@@ -172,10 +183,29 @@ public class RecognizeFragment extends Fragment {
     }
 
     /**
-     * Draw Text to Bitmap
-     * @param textBlocks text blocks that recognize from image
+     * Preparing to draw canvas
+     * @param todoItems items to do
      */
-    private void drawCanvas(ArrayList<MetaText> textBlocks, boolean playPuzzle, int spanCount) {
+    private void prepareDraw(ArrayList<String> todoItems) {
+        btn_switch_template.setVisibility(View.VISIBLE);
+        slider_text_size.setVisibility(View.VISIBLE);
+
+        // Save to storage
+        ArrayList<String> list = Util.loadSchedule(ctx);
+        list.addAll(todoItems);
+        Util.saveSchedule(ctx, list);
+
+        switchTemplate();
+    }
+
+
+    /**
+     * Draw Text to Bitmap
+     * @param textSize render text size
+     * @param playPuzzle play puzzle game or not
+     * @param spanCount puzzle game difficulty (minimum 2)
+     */
+    private void drawCanvas(float textSize, boolean playPuzzle, int spanCount) {
         // Background Template
         Bitmap template = BitmapFactory
                 .decodeResource(getResources(), templateId);
@@ -193,17 +223,21 @@ public class RecognizeFragment extends Fragment {
         canvas.drawBitmap(template, 0, 0, null);
 
         // Draw Masking
-        canvas.drawARGB(80, 102, 204, 255);
+        canvas.drawARGB(128, 0, 0, 0);
 
         // Create a Paint Config of the Text
         Paint textPaintMesh = new Paint();
-        float sizeFactor = (float)4.0 * ((template.getHeight() / 1280)  - 1);
-        textPaintMesh.setTextSize(32 + sizeFactor);
+
+        if (textSize < 16) {
+            textSize = 32 + ((float)4.0 * ((template.getHeight() / 1280)  - 1));
+        }
+
+        textPaintMesh.setTextSize(textSize);
         textPaintMesh.setColor(Color.WHITE);
         textPaintMesh.setAntiAlias(true);
         textPaintMesh.setFakeBoldText(true);
 
-        for (MetaText block : textBlocks) {
+        for (MetaText block : textInfoBlocks) {
             RectF rect = block.getFrame();
             float left = rect.left / currentWidth * template.getWidth();
             float bottom = rect.bottom / currentHeight * template.getHeight();
@@ -211,6 +245,7 @@ public class RecognizeFragment extends Fragment {
         }
 
         if (playPuzzle) {
+            spanCount = spanCount < 2 ? 2 : spanCount;
             // Load puzzle bitmaps
             Util.puzzleList = Util.splitBitmap(cover, spanCount, spanCount);
             // re-order them
@@ -279,7 +314,7 @@ public class RecognizeFragment extends Fragment {
                 boolean isLocked = data.getBooleanExtra("locked", false);
                 int spanCount = data.getIntExtra("span", 3);
                 if (textInfoBlocks != null) {
-                    drawCanvas(textInfoBlocks, isLocked, spanCount);
+                    drawCanvas(0, isLocked, spanCount);
                 } else {
                     makeSnackbar("Error Recognition!");
                 }
