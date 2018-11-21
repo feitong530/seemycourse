@@ -2,6 +2,7 @@ package hk.hku.cs.seemycourse;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -70,8 +71,14 @@ public class PuzzleActivity extends AppCompatActivity {
                 Log.e("puzzle", accurate ? "Success!": "Not yet!");
 
                 if (accurate) {
-                    setResult(RESULT_OK, new Intent());
-                    finishAfterTransition();
+                    // Delay
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setResult(RESULT_OK, new Intent());
+                            finishAfterTransition();
+                        }
+                    }, 800);
                 }
                 return false;
             }

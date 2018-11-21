@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,6 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -199,7 +197,8 @@ public class RecognizeFragment extends Fragment {
 
         // Create a Paint Config of the Text
         Paint textPaintMesh = new Paint();
-        textPaintMesh.setTextSize(32);
+        float sizeFactor = (float)4.0 * ((template.getHeight() / 1280)  - 1);
+        textPaintMesh.setTextSize(32 + sizeFactor);
         textPaintMesh.setColor(Color.WHITE);
         textPaintMesh.setAntiAlias(true);
         textPaintMesh.setFakeBoldText(true);
