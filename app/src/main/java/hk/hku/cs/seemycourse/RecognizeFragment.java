@@ -214,14 +214,8 @@ public class RecognizeFragment extends Fragment {
         if (playPuzzle) {
             // Load puzzle bitmaps
             Util.puzzleList = Util.splitBitmap(cover, spanCount, spanCount);
-            for (int i = 0; i <Util.puzzleList.size(); ++i) {
-                Log.e("puzzle", "[" + i + "]: " + Util.puzzleList.get(i).getIndex());
-            }
             // re-order them
             Collections.shuffle(Util.puzzleList);
-            for (int i = 0; i <Util.puzzleList.size(); ++i) {
-                Log.e("puzzle", "[" + i + "]: " + Util.puzzleList.get(i).getIndex());
-            }
 
             Intent intent = new Intent(getContext(), PuzzleActivity.class);
             intent.putExtra("spanCount", spanCount);

@@ -11,7 +11,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,22 +53,22 @@ public class PuzzleActivity extends AppCompatActivity {
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                //滑动事件
+                // Drag event
                 int from = viewHolder.getAdapterPosition();
                 int to = target.getAdapterPosition();
                 ArrayList<BitmapPiece> list = adapter.getDataList();
-                Collections.swap(list, from, to);
-//                adapter.notifyItemMoved(from, to);
-                synchronized (adapter) {
-                    adapter.notifyDataSetChanged();
-                }
+                BitmapPiece p = list.remove(from);
+                list.add(to, p);
+                adapter.notifyItemMoved(from, to);
 
                 boolean accurate = true;
                 for (int i = 0; i < list.size(); ++i) {
                     accurate &= String.valueOf(i).equals(list.get(i).getIndex());
+                    // TODO: remove debugging output
                     Log.e("puzzle", "[" + i + "]: " + list.get(i).getIndex());
                 }
                 Log.e("puzzle", accurate ? "Success!": "Not yet!");
+
                 if (accurate) {
                     setResult(RESULT_OK, new Intent());
                     finishAfterTransition();
