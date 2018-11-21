@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">SeeMyCourse</string>
     <string name="image_description">Place Your Image</string>
+
+    <item name="tag_resource_id" type="id" />
+    <item name="tag_locked_status" type="id" />
+    <item name="tag_span_count" type="id" />
 </resources>

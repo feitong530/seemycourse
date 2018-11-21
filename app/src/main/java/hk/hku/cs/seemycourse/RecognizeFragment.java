@@ -31,6 +31,7 @@ import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,7 +54,17 @@ public class RecognizeFragment extends Fragment {
     private float currentHeight = 0;
     private float currentWidth  = 0;
 
+    /* Selected Template Id */
+    private int templateId = R.mipmap.template_01;
+
+    /* Current Drew Cover */
+    private Bitmap cover = null;
+
+    /* Recognition Result */
+    ArrayList<MetaText> textInfoBlocks = null;
+
     @BindView(R.id.btn_select_image) Button btn_select_image;
+    @BindView(R.id.btn_switch_template) Button btn_switch_template;
     @BindView(R.id.imageView) ImageView iv;
 
     @Nullable
@@ -110,6 +121,17 @@ public class RecognizeFragment extends Fragment {
     }
 
     /**
+     * Switch to a different template and draw again
+     */
+    @OnClick(R.id.btn_switch_template)
+    public void switchTemplate() {
+        startActivityForResult(
+                new Intent(getContext(), TemplateSelectActivity.class),
+                TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION
+        );
+    }
+
+    /**
      * Using Google ML Kit API to Recognize Text Information
      */
     @OnClick(R.id.btn_recognize)
@@ -139,7 +161,9 @@ public class RecognizeFragment extends Fragment {
                         }
                     }
                 }
-                drawCanvas(blocks);
+                textInfoBlocks = blocks;
+                btn_switch_template.setVisibility(View.VISIBLE);
+                switchTemplate();
             }
 
             @Override
@@ -151,13 +175,13 @@ public class RecognizeFragment extends Fragment {
      * Draw Text to Bitmap
      * @param textBlocks text blocks that recognize from image
      */
-    private void drawCanvas(ArrayList<MetaText> textBlocks) {
+    private void drawCanvas(ArrayList<MetaText> textBlocks, boolean playPuzzle, int spanCount) {
         // Background Template
         Bitmap template = BitmapFactory
-                .decodeResource(getResources(), R.mipmap.night);
+                .decodeResource(getResources(), templateId);
 
         // Create a Empty Bitmap
-        Bitmap cover = Bitmap.createBitmap(
+        cover = Bitmap.createBitmap(
                 template.getWidth(),
                 template.getHeight(),
                 Bitmap.Config.ARGB_8888
@@ -173,7 +197,8 @@ public class RecognizeFragment extends Fragment {
 
         // Create a Paint Config of the Text
         Paint textPaintMesh = new Paint();
-        textPaintMesh.setTextSize(32);
+        float sizeFactor = (float)4.0 * ((template.getHeight() / 1280)  - 1);
+        textPaintMesh.setTextSize(32 + sizeFactor);
         textPaintMesh.setColor(Color.WHITE);
         textPaintMesh.setAntiAlias(true);
         textPaintMesh.setFakeBoldText(true);
@@ -185,7 +210,19 @@ public class RecognizeFragment extends Fragment {
             canvas.drawText(block.getText(), left, bottom, textPaintMesh);
         }
 
-        iv.setImageBitmap(cover);
+        if (playPuzzle) {
+            // Load puzzle bitmaps
+            Util.puzzleList = Util.splitBitmap(cover, spanCount, spanCount);
+            // re-order them
+            Collections.shuffle(Util.puzzleList);
+
+            Intent intent = new Intent(getContext(), PuzzleActivity.class);
+            intent.putExtra("spanCount", spanCount);
+            startActivityForResult(intent, PuzzleActivity.REQUEST_PUZZLE_GAME);
+        } else {
+            iv.setImageBitmap(cover);
+        }
+
     }
 
     /**
@@ -234,6 +271,25 @@ public class RecognizeFragment extends Fragment {
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Exception error = result.getError();
                     makeSnackbar(error.getMessage());
+                }
+                break;
+            // Select Template
+            case TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION:
+                templateId = data.getIntExtra("template", R.mipmap.template_01);
+                boolean isLocked = data.getBooleanExtra("locked", false);
+                int spanCount = data.getIntExtra("span", 3);
+                if (textInfoBlocks != null) {
+                    drawCanvas(textInfoBlocks, isLocked, spanCount);
+                } else {
+                    makeSnackbar("Error Recognition!");
+                }
+                break;
+            // Play Puzzle Game
+            case PuzzleActivity.REQUEST_PUZZLE_GAME:
+                if (resultCode == RESULT_OK) {
+                    iv.setImageBitmap(cover);
+                } else {
+                    makeSnackbar("You can try again !");
                 }
                 break;
         }

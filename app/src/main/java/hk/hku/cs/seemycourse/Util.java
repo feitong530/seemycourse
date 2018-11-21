@@ -18,12 +18,16 @@ import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Util {
 
     /* temp directory in device */
     private static final String IMAGE_DIRECTORY = "seemycourse";
+
+    /* Bitmaps to be combine */
+    public static ArrayList<BitmapPiece> puzzleList = null;
 
     /**
      * Generate A File in Device
@@ -55,6 +59,36 @@ public class Util {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+    /**
+     * Split a Bitmap into several Bitmaps
+     * @param original original bitmap
+     * @param columns columns to be split
+     * @param rows rows to be split
+     * @return array of bitmap and it's original index
+     */
+    public static ArrayList<BitmapPiece> splitBitmap(Bitmap original, int columns, int rows) {
+        ArrayList<BitmapPiece> list = new ArrayList<>(rows * columns);
+        int width = original.getWidth();
+        int height = original.getHeight();
+        int pieceWidth = width / rows;
+        int pieceHeight = height / columns;
+        for (int y = 0; y < rows; ++y) {
+            for (int x = 0; x < columns; ++x) {
+                list.add(new BitmapPiece(
+                        String.valueOf(y * columns + x),
+                        Bitmap.createBitmap(
+                                original,
+                                x * pieceWidth,
+                                y * pieceHeight,
+                                pieceWidth,
+                                pieceHeight
+                        )
+                ));
+            }
+        }
+        return list;
     }
 
     /**

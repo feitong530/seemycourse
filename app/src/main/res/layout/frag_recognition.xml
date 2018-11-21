@@ -75,11 +75,25 @@
                 android:contentDescription="@string/image_description" />
 
             <Button
+                android:id="@+id/btn_switch_template"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="80dp"
+                android:background="@drawable/btn_state"
+                android:fontFamily="casual"
+                android:text="Switch Template"
+                android:textColor="@color/shenlanzi"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/btn_recognize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="80dp"
                 android:background="@drawable/btn_state"
                 android:fontFamily="casual"
