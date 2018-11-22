@@ -107,6 +107,19 @@
                 android:textColor="@color/shenlanzi"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="80dp"
+                android:background="@drawable/btn_state"
+                android:fontFamily="casual"
+                android:visibility="gone"
+                android:text="Save Image"
+                android:textColor="@color/shenlanzi"
+                android:textStyle="bold" />
 
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>

@@ -8,12 +8,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="2dp"
+        android:padding="2dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btn_game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/btn_state"
+            android:fontFamily="casual"
+            android:text="Tetris Game"
+            android:textColor="@color/shenlanzi"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
