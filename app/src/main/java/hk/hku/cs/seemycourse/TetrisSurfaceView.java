@@ -21,7 +21,7 @@ import hk.hku.cs.seemycourse.Tetris.TetrisDirection;
 import hk.hku.cs.seemycourse.Tetris.TetrisPoint;
 
 public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceHolder.Callback {
-    private static int TOP_PANEL_HEIGHT = 0;
+    private static int TOP_MARGIN = 3;
 
     /* Holds the surface frame */
     private SurfaceHolder holder;
@@ -83,10 +83,10 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
 
         /* Initialize Game */
         gameCtx = new Tetris();
-        gameCtx.init(12, 32);
+        gameCtx.init(12, 36);
 
         FillPaint = new Paint();
-        FillPaint.setColor(Color.CYAN);
+        FillPaint.setColor(getResources().getColor(R.color.colorPrimary));
         FillPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         StrokePaint = new Paint();
@@ -112,7 +112,7 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
         int boardHeight = gameCtx.getHeight();
 
         int gridWidth = Math.round((float)canvasWidth / boardWidth);
-        int gridHeight = Math.round((float)(canvasHeight - TOP_PANEL_HEIGHT) / boardHeight);
+        int gridHeight = Math.round((float)canvasHeight / boardHeight);
 
         c.drawColor(Color.WHITE);
         for (int x = 0; x < boardWidth; ++x) {
@@ -120,9 +120,9 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
                 // Stroke
                 c.drawRect(
                         gridWidth * x,
-                        gridHeight * y,
+                        gridHeight * y + TOP_MARGIN,
                         gridWidth * (x + 1),
-                        gridHeight * (y + 1),
+                        gridHeight * (y + 1) + TOP_MARGIN,
                         StrokePaint
                 );
                 // If there is a block
@@ -130,9 +130,9 @@ public class TetrisSurfaceView extends SurfaceView implements Runnable, SurfaceH
                     // Fill
                     c.drawRect(
                             gridWidth * x,
-                            gridHeight * y,
+                            gridHeight * y + TOP_MARGIN,
                             gridWidth * (x + 1),
-                            gridHeight * (y + 1),
+                            gridHeight * (y + 1) + TOP_MARGIN,
                             FillPaint
                     );
                 }

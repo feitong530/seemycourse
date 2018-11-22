@@ -12,7 +12,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -66,6 +65,7 @@ public class RecognizeFragment extends Fragment {
     ArrayList<MetaText> textInfoBlocks = null;
 
     @BindView(R.id.slider_text_size) SeekBar slider_text_size;
+    @BindView(R.id.btn_save) Button btn_save_image;
     @BindView(R.id.btn_select_image) Button btn_select_image;
     @BindView(R.id.btn_switch_template) Button btn_switch_template;
     @BindView(R.id.imageView) ImageView iv;
@@ -151,6 +151,16 @@ public class RecognizeFragment extends Fragment {
     }
 
     /**
+     * Save rendered bitmap to device and notify the system media
+     */
+    @OnClick(R.id.btn_save)
+    public void saveImageToDevice() {
+        if (cover == null) return;
+        Util.saveImageToDevice(ctx, "timetable", cover);
+        makeSnackbar("Save Success!");
+    }
+
+    /**
      * Using Google ML Kit API to Recognize Text Information
      */
     @OnClick(R.id.btn_recognize)
@@ -188,6 +198,7 @@ public class RecognizeFragment extends Fragment {
      */
     private void prepareDraw(ArrayList<String> todoItems) {
         btn_switch_template.setVisibility(View.VISIBLE);
+        btn_save_image.setVisibility(View.VISIBLE);
         slider_text_size.setVisibility(View.VISIBLE);
 
         // Save to storage

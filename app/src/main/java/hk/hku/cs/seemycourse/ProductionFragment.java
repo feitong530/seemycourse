@@ -1,6 +1,6 @@
 package hk.hku.cs.seemycourse;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import hk.hku.cs.seemycourse.Template.TemplateItem;
+import butterknife.OnClick;
 import hk.hku.cs.seemycourse.Template.TemplateAdapter;
 
 public class ProductionFragment extends Fragment {
@@ -30,6 +30,9 @@ public class ProductionFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Initialize
+     */
     private void init() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TemplateAdapter adapter = new TemplateAdapter(getContext());
@@ -46,6 +49,14 @@ public class ProductionFragment extends Fragment {
                 new Template.TemplateItem(R.mipmap.template_14, "template 14")
         );
         recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * Start the Tetris Game !
+     */
+    @OnClick(R.id.btn_game)
+    public void startTetrisGame() {
+        startActivity(new Intent(getContext(), GameActivity.class));
     }
 
 }
