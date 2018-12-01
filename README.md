@@ -21,6 +21,22 @@ Gif Step by Step ↓
 
 
 
+## Snapshots
+
+![recognize](https://user-images.githubusercontent.com/10103993/49324815-6c7be000-f570-11e8-8e9c-93e75e43f6da.png)
+![template](https://user-images.githubusercontent.com/10103993/49324818-6d147680-f570-11e8-863d-8e25f74e4e63.png)
+
+![cropimage](https://user-images.githubusercontent.com/10103993/49324813-6c7be000-f570-11e8-8e93-588b5a1283c7.png)
+![adjusttext](https://user-images.githubusercontent.com/10103993/49324820-6dad0d00-f570-11e8-9467-0dbc1472089a.png)
+
+![sort](https://user-images.githubusercontent.com/10103993/49324816-6d147680-f570-11e8-94f9-5662958120bc.png)
+![swipe](https://user-images.githubusercontent.com/10103993/49324817-6d147680-f570-11e8-8b36-2f54d05ba5ea.png)
+
+
+![puzzle](https://user-images.githubusercontent.com/10103993/49324814-6c7be000-f570-11e8-89aa-b79ce27214b2.png)
+![tetris](https://user-images.githubusercontent.com/10103993/49324819-6dad0d00-f570-11e8-9c07-72b096414e7f.png)
+
+
 
 
 ## App Structure
