@@ -321,9 +321,13 @@ public class RecognizeFragment extends Fragment {
                 break;
             // Select Template
             case TemplateSelectActivity.REQUEST_TEMPLATE_SELECTION:
-                templateId = data.getIntExtra("template", R.mipmap.template_01);
-                boolean isLocked = data.getBooleanExtra("locked", false);
-                int spanCount = data.getIntExtra("span", 3);
+                boolean isLocked = false;
+                int spanCount = 0;
+                if (resultCode == RESULT_OK && data != null) {
+                    templateId = data.getIntExtra("template", R.mipmap.template_01);
+                    isLocked = data.getBooleanExtra("locked", false);
+                    spanCount = data.getIntExtra("span", 3);
+                }
                 if (textInfoBlocks != null) {
                     drawCanvas(0, isLocked, spanCount);
                 } else {
